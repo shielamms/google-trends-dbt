@@ -1,0 +1,8 @@
+version: 2
+sources:
+  - name: s_google_trends
+    database: bigquery-public-data
+    schema: google_trends
+    tables:
+      - name: s_international_top_terms
+        identifier: international_top_terms

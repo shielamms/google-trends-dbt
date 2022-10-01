@@ -1,0 +1,39 @@
+
+version: 2
+
+models:
+  - name: my_first_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: my_second_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  # - name: stg_international_top_terms
+  #   columns:
+  #     - name: itop_terms_week_start_date
+  #       tests:
+  #         - dbt_utils.at_least_one
+  #     - name: itop_terms_country_code
+  #       tests:
+  #         - dbt_utils.at_least_one
+  #     - name: itop_terms_region_name
+  #       tests:
+  #         - dbt_utils.at_least_one
+  #     - name: itop_terms_score
+  #       tests:
+  #         - dbt_utils.at_least_one
+  #     - name: itop_terms_rank
+  #       tests:
+  #         - dbt_utils.at_least_one
