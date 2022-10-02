@@ -33,3 +33,23 @@ models:
       - name: search_term
         tests:
           - dbt_utils.at_least_one
+      - name: max_score
+        tests:
+          - dbt_utils.at_least_one
+  - name: trending_terms
+    columns:
+      - name: week_start_date
+        tests:
+          - dbt_utils.at_least_one
+      - name: country_code
+        tests:
+          - dbt_utils.at_least_one
+      - name: ranking
+        tests:
+          - dbt_utils.at_least_one
+      - name: search_term
+        tests:
+          - dbt_utils.at_least_one
+      - name: score
+        tests:
+          - dbt_utils.at_least_one

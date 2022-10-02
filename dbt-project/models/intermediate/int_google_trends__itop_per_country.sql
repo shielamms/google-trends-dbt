@@ -4,51 +4,56 @@ with s_itop_terms as (
 
 ),
 
-filtered_ranks_and_scores as (
+ordered_terms_by_rank_and_score as (
 
-    select *
-    from s_itop_terms
-    where ranking is not null
+  select
+    week_start_date,
+    country_code,
+    region_name,
+    score,
+    ranking,
+    search_term
+  from s_itop_terms
+  -- where week_start_date >= '2022-01-01' -- already defined in staging
     and score is not null
+    and ranking is not null
+  order by week_start_date,
+           country_code,
+           ranking asc,
+           score desc,
+           region_name
 
 ),
 
-unique_search_terms as (
+max_scores_per_rank as (
 
-    select
-      week_start_date,
-      country_code,
-      search_term,
-      min(ranking) as ranking
-    from filtered_ranks_and_scores
-    group by week_start_date,
-             country_code,
-             search_term
+  select
+    week_start_date,
+    country_code,
+    ranking,
+    max(score) as max_score,
+  from
+    ordered_terms_by_rank_and_score
+  group by week_start_date, country_code, ranking
+  order by week_start_date, country_code, ranking
 
 ),
 
 base as (
 
-    select
-        week_start_date,
-        country_code,
-        ranking,
-        search_term,
-    from (
-      select
-        week_start_date,
-        country_code,
-        row_number() over ( partition by week_start_date,
-                                         country_code
-                            order by ranking asc ) as ranking,
-        search_term
-      from unique_search_terms
-    )
-    where ranking <= 10
-    -- is order by a good practice here?
-    -- order by week_start_date,
-    --          country_code,
-    --          ranking asc
+  select
+    mx.week_start_date as week_start_date,
+    mx.country_code as country_code,
+    mx.ranking as ranking,
+    oirs.search_term as search_term,
+    max(mx.max_score) as max_score
+  from ordered_terms_by_rank_and_score oirs
+  inner join max_scores_per_rank mx on mx.ranking = oirs.ranking
+                                and mx.max_score = oirs.score
+                                and mx.country_code = oirs.country_code
+                                and mx.week_start_date = oirs.week_start_date
+  group by mx.week_start_date, mx.country_code, oirs.search_term, mx.ranking
+  order by mx.week_start_date, mx.country_code, mx.ranking
 
 )
 
