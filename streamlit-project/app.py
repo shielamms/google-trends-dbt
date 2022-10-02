@@ -1,5 +1,6 @@
 import datetime
 import pandas as pd
+import pycountry
 import streamlit as st
 from google.oauth2 import service_account
 from google.cloud import bigquery
@@ -13,6 +14,9 @@ project = st.secrets["gcp_project"]
 dataset = st.secrets["bq_dataset"]
 table = st.secrets["bq_table"]
 
+countries = {}
+for c in pycountry.countries:
+    countries[c.name] = c.alpha_2
 
 def build_query(country=None,
                 start_date=None,
@@ -65,14 +69,12 @@ def read_bq_trending_terms(country=None,
 
 
 st.write('## Google Trends Keywords 2022')
-# country = 'GB'
-# start_date = '2022-09-01'
-# end_date = '2022-09-20'
 
-country = st.text_input('Country Code')
+country = st.selectbox('Country', options=sorted(countries.keys()))
+country_code = countries[country]
 start_date = st.date_input(
     'From',
-    value=datetime.date.today(),
+    value=datetime.datetime.strptime('2022-09-01', '%Y-%M-%d'),
     min_value=datetime.datetime.strptime('2022-01-01', '%Y-%M-%d'),
     max_value=datetime.date.today()
 )
@@ -83,7 +85,7 @@ end_date = st.date_input(
     max_value=datetime.date.today()
 )
 
-results = read_bq_trending_terms(country, start_date, end_date)
+results = read_bq_trending_terms(country_code, start_date, end_date)
 
 st.write("Some results here...")
 
