@@ -1,0 +1,35 @@
+
+version: 2
+
+models:
+  - name: stg_google_trends__itop_terms
+    columns:
+      - name: week_start_date
+        tests:
+          - dbt_utils.at_least_one
+      - name: country_code
+        tests:
+          - dbt_utils.at_least_one
+      - name: region_name
+        tests:
+          - dbt_utils.at_least_one
+      - name: score
+        tests:
+          - dbt_utils.at_least_one
+      - name: rank
+        tests:
+          - dbt_utils.at_least_one
+  - name: int_google_trends__itop_per_country
+    columns:
+      - name: week_start_date
+        tests:
+          - dbt_utils.at_least_one
+      - name: country_code
+        tests:
+          - dbt_utils.at_least_one
+      - name: ranking
+        tests:
+          - dbt_utils.at_least_one
+      - name: search_term
+        tests:
+          - dbt_utils.at_least_one
