@@ -1,32 +1,25 @@
-# End-to-end ELT pipeline of Google Trends data with dbt and BigQuery
+# End-to-end pipeline of Google Trends data with dbt, BigQuery, and Streamlit
 
-## Setup
-This project was written with dbt-bigquery v1.2.0 on Python 3.7.9. To set up this project in your local environment, it is recommended that you use a virtual environment to install the required dbt libraries.
+This project aims to demonstrate data warehouse transformations within Google BigQuery using dbt, then allowing a Streamlit app to directly access the processed data in BigQuery. I've chosen the Google Trends dataset in BigQuery's public datasets for this project - specifically transforming data from the `international_top_terms` table. This project is only a simulation of a data warehouse project.
 
-```
-pyenv install 3.7.9
-pyenv local 3.7.9
-virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+## Simple architecture
 
-### dbt profile
+The illustration below outlines the different interacting parts of this project.
 
-You need to create a `profiles.yml` in your `.dbt` directory to let dbt know where to generate the materialised views for this project. Since this project is specifically for running dbt on BigQuery, you first need a Google Cloud account, where you then need to create a service credential to be able to access BigQuery from dbt.
+![Architecture](images/my-dbt-project-setup.png)
 
-The `profiles.yml` looks something like this:
+1. The raw data comes from BigQuery's public datasets.
+2. The dbt code follows a certain design pattern consisting of three transformation layers: staging, intermediate (sometimes called "integration"), and warehouse layer (sometimes called "data marts"). The staging layer models the raw data and performs some type declarations. The intermediate layer performs the aggregations and other data enrichments to transform the raw data into entities that can address a business problem. The warehouse layer models the finalised entities that the warehouse users will query to answer business problems.
+3. The data warehouse contains the materialised views from the different dbt layers.
+4. The Streamlit app connects directly to BigQuery using service credentials, queries the warehouse layer's output, then displays the results in the app's front-end.
 
-```yaml
- shiela:
-   outputs:
-     dev:
-       type: bigquery
-       method: service-account
-       project: gcp-practice
-       dataset: shiela_practice_dev
-       location: US
-       threads: 2
-       timeout_seconds: 300
-       keyfile_json: your_home_dir/location/of/file/your_service_credentials_filename.json
- ```
+
+## Project structure
+
+This project has two main folders:
+
+1. `dbt-project` - contains the dbt code that connects to the BigQuery dataset and performs some transformations to address a business question on the selected dataset.
+
+2. `streamlit-project` - contains the Python code using the Streamlit framework to create and deploy an app. This project is stored in a Github repository, so that if you would like to deploy the app to Streamlit Cloud, you can just reference this repository on the Streamlit Cloud app configuration.
+
+
