@@ -15,7 +15,7 @@ ordered_terms_by_rank_and_score as (
     search_term
   from s_itop_terms
   -- where week_start_date >= '2022-01-01' -- already defined in staging
-    and score is not null
+    where score is not null
     and ranking is not null
   order by week_start_date,
            country_code,
